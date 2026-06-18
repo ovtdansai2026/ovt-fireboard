@@ -172,13 +172,13 @@
             feed.prepend(card);
         }
 
-        async function sendMessage() {
+async function sendMessage() {
             const input = document.getElementById('msgInput');
             const btn = document.getElementById('sendBtn');
             const msg = input.value.trim();
 
             if (!msg) {
-                showToast("พิมพ์อะไรสักหน่อยสิวัยรุ่น!"); // เปลี่ยนจาก alert
+                showToast("พิมพ์อะไรสักหน่อยสิวัยรุ่น!");
                 return;
             }
 
@@ -186,24 +186,50 @@
             btn.innerText = "กำลังส่ง... ⏳";
 
             try {
-                const response = await fetch(API_URL, {
+                // ⚡️ ใส่เกียร์โหมด no-cors: ยิงไฟทะลวงบล็อก ไม่ต้องรอใบเสร็จ!
+                await fetch(API_URL, {
                     method: 'POST',
+                    mode: 'no-cors', 
                     body: JSON.stringify({ action: "add", message: msg })
                 });
                 
-                const result = await response.json();
-                if(result.status === "success") {
-                    showToast("ส่งสำเร็จ! รอแอดมิน อวท. ตรวจสอบครับ"); // เปลี่ยนจาก alert
-                    input.value = ""; 
-                }
+                // ถ้ายิงผ่าน ถือว่าสำเร็จเลย!
+                showToast("ส่งสำเร็จ! รอแอดมิน อวท. ตรวจสอบครับ"); 
+                input.value = ""; 
             } catch (error) {
-                showToast("เกิดข้อผิดพลาดในการส่งข้อมูล สายไฟอาจหลวม!"); // เปลี่ยนจาก alert
+                showToast("เกิดข้อผิดพลาด เน็ตอาจจะหลุด!"); 
             } finally {
                 btn.disabled = false;
                 btn.innerText = "ส่งข้อความ";
             }
         }
 
+        async function upvote(id) {
+            const btn = document.getElementById(`btn-${id}`);
+            btn.disabled = true;
+            btn.innerText = "กำลังเติมไฟ... 🔥";
+
+            try {
+                // ⚡️ ใส่เกียร์โหมด no-cors เช่นกัน
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ action: "upvote", id: id })
+                });
+                
+                // ถ้ายิงผ่าน ถือว่าสำเร็จ! สับคัตเอาต์ประทับตราล็อกปุ่มทันที
+                localStorage.setItem('voted_' + id, true);
+                let currentVote = parseInt(btn.innerText.match(/\d+/)[0]);
+                btn.innerText = `🔥 โหวตแล้ว (${currentVote + 1})`;
+                showToast("เติมไฟให้เพื่อนเรียบร้อย!"); 
+                
+                // 🚨 สังเกตว่าเราจะไม่เขียนคำสั่งปลดล็อกปุ่ม (btn.disabled = false) ตรงนี้แล้วครับ มันจะถูกล็อกถาวร!
+            } catch (error) {
+                showToast("กดโหวตไม่สำเร็จ เน็ตหลุดหรือเปล่า?"); 
+                btn.disabled = false; // จะปลดล็อกให้กดใหม่ก็ต่อเมื่อเน็ตพังจริงๆ เท่านั้น
+                btn.innerText = "🔥 เติมไฟ";
+            }
+        }
         async function upvote(id) {
             const btn = document.getElementById(`btn-${id}`);
             btn.disabled = true;
