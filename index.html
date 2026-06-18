@@ -198,6 +198,15 @@
 
         async function upvote(id) {
             const btn = document.getElementById(`btn-${id}`);
+            
+            // 🛠️ แก้บั๊ก: อ่านจำนวนโหวตเดิมออกมาก่อนที่ข้อความบนปุ่มจะเปลี่ยน!
+            let currentVote = 0;
+            const match = btn.innerText.match(/\d+/);
+            if (match) {
+                currentVote = parseInt(match[0]);
+            }
+
+            // ล็อกปุ่มทันทีเพื่อตัดกระแสไฟกันสแปมรัว
             btn.disabled = true;
             btn.innerText = "กำลังเติมไฟ... 🔥";
 
@@ -208,14 +217,15 @@
                     body: JSON.stringify({ action: "upvote", id: id })
                 });
                 
+                // ถ้ายิงข้อมูลเข้า Google สำเร็จ ให้ล็อกสถานะถาวร
                 localStorage.setItem('voted_' + id, true);
-                let currentVote = parseInt(btn.innerText.match(/\d+/)[0]);
                 btn.innerText = `🔥 โหวตแล้ว (${currentVote + 1})`;
                 showToast("เติมไฟให้เพื่อนเรียบร้อย!"); 
             } catch (error) {
+                // จะเข้าเงื่อนไขนี้ต่อเมื่อเน็ตดับหรือระบบล่มจริงๆ เท่านั้น
                 showToast("กดโหวตไม่สำเร็จ เน็ตหลุดหรือเปล่า?"); 
                 btn.disabled = false; 
-                btn.innerText = "🔥 เติมไฟ";
+                btn.innerText = `🔥 เติมไฟ (${currentVote})`;
             }
         }
 
