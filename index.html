@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>กระดานเติมไฟ อวท.</title>
+    <!-- นำเข้า Font Kanit จาก Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23ff5722%22>🔥</text></svg>">
     <style>
         /* --- ตั้งค่าสีและดีไซน์ --- */
         body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            /* เปลี่ยนมาใช้ฟอนต์ Kanit */
+            font-family: 'Kanit', sans-serif; 
             background-color: #121212; 
             color: #ffffff; 
             margin: 0; 
@@ -21,6 +24,7 @@
             text-transform: uppercase; 
             border-bottom: 2px solid #333; 
             padding-bottom: 10px; 
+            font-weight: 600;
         }
         
         /* กล่องพิมพ์ข้อความ */
@@ -31,6 +35,8 @@
             border: 1px solid #444; border-radius: 4px; 
             padding: 10px; box-sizing: border-box; 
             resize: none; margin-bottom: 10px; 
+            font-family: 'Kanit', sans-serif; /* บังคับฟอนต์ในกล่องพิมพ์ */
+            font-size: 1em;
         }
         textarea:focus { outline: none; border-color: #ff5722; }
         
@@ -39,7 +45,9 @@
             background: #ff5722; color: white; 
             border: none; padding: 10px 15px; 
             border-radius: 4px; cursor: pointer; 
-            font-weight: bold; width: 100%; transition: 0.3s; 
+            font-weight: 500; width: 100%; transition: 0.3s; 
+            font-family: 'Kanit', sans-serif;
+            font-size: 1em;
         }
         button:hover { background: #e64a19; }
         button:disabled { background: #555; cursor: not-allowed; }
@@ -50,8 +58,8 @@
             background: #1e1e1e; padding: 15px; 
             border-radius: 8px; border-left: 4px solid #ff5722; 
         }
-        .card-meta { font-size: 0.8em; color: #888; margin-bottom: 8px; }
-        .card-text { font-size: 1.1em; line-height: 1.4; margin-bottom: 15px; }
+        .card-meta { font-size: 0.85em; color: #888; margin-bottom: 8px; }
+        .card-text { font-size: 1.1em; line-height: 1.5; margin-bottom: 15px; font-weight: 300; }
         
         /* ปุ่มเติมไฟ */
         .card-actions { display: flex; justify-content: flex-end; }
@@ -61,6 +69,32 @@
         }
         .btn-fire:hover:not(:disabled) { background: #ff5722; color: white; }
         .btn-fire:disabled { border-color: #555; color: #555; background: transparent; }
+
+        /* --- ระบบแจ้งเตือน (Toast) แทน Alert เดิม --- */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px 20px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            border-bottom: 3px solid #ff5722;
+            font-weight: 400;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show {
+            visibility: visible;
+            bottom: 50px;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -75,13 +109,28 @@
         <div id="loading" style="text-align: center; color: #ff5722; display: none;">กำลังโหลดข้อมูล... ⏳</div>
 
         <div class="feed" id="feedContainer">
-            </div>
+            <!-- ข้อมูลจะถูกดึงมาโชว์ตรงนี้ -->
+        </div>
     </div>
 
+    <!-- กล่องแสดงข้อความแจ้งเตือน (แทน Alert) -->
+    <div id="toast">ข้อความแจ้งเตือน</div>
+
     <script>
+        // 🚨 วาง URL API ของท่านตรงนี้
         const API_URL = "https://script.google.com/macros/s/AKfycbyMiIeWM-IEo5E41cCnVcIgKQjhvfhJ5WIXDQdTysjFZqKoFgh-sNiMpkl9kIVDKmhVFw/exec";
 
-        // โหลดข้อมูลจาก Google Sheets ทันทีที่เปิดเว็บ
+        // ฟังก์ชันควบคุมการโชว์แจ้งเตือน (Toast)
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.classList.add("show");
+            // ตั้งเวลาให้ไฟดับเองใน 3 วินาที
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
         async function loadData() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('feedContainer').innerHTML = '';
@@ -90,7 +139,6 @@
                 const response = await fetch(API_URL);
                 const data = await response.json();
                 
-                // เอาข้อความมาลูปสร้างกล่อง (แสดงผลจากล่างขึ้นบน)
                 data.forEach(item => {
                     createCard(item);
                 });
@@ -102,16 +150,12 @@
             }
         }
 
-        // ฟังก์ชันวาดกล่องข้อความ
         function createCard(item) {
             const feed = document.getElementById('feedContainer');
             const card = document.createElement('div');
             card.className = 'card';
             
-            // แปลงวันที่
             const date = new Date(item.timestamp).toLocaleDateString('th-TH');
-            
-            // เช็ค LocalStorage ว่าเครื่องนี้เคยกดโหวตข้อความนี้ไปหรือยัง
             const isVoted = localStorage.getItem('voted_' + item.id);
             const btnText = isVoted ? `🔥 โหวตแล้ว (${item.upvote})` : `🔥 เติมไฟ (${item.upvote})`;
             const btnDisabled = isVoted ? 'disabled' : '';
@@ -125,21 +169,19 @@
                     </button>
                 </div>
             `;
-            feed.prepend(card); // ดันข้อความใหม่สุดไว้ข้างบน
+            feed.prepend(card);
         }
 
-        // ฟังก์ชันส่งข้อความระบาย
         async function sendMessage() {
             const input = document.getElementById('msgInput');
             const btn = document.getElementById('sendBtn');
             const msg = input.value.trim();
 
             if (!msg) {
-                alert("พิมพ์อะไรสักหน่อยสิวัยรุ่น!");
+                showToast("พิมพ์อะไรสักหน่อยสิวัยรุ่น!"); // เปลี่ยนจาก alert
                 return;
             }
 
-            // ตัดสวิตช์ปุ่มกันกดเบิ้ล
             btn.disabled = true;
             btn.innerText = "กำลังส่ง... ⏳";
 
@@ -151,18 +193,17 @@
                 
                 const result = await response.json();
                 if(result.status === "success") {
-                    alert("ส่งข้อความสำเร็จ! รอแอดมิน อวท. ตรวจสอบก่อนขึ้นบอร์ดครับ");
-                    input.value = ""; // เคลียร์ช่องพิมพ์
+                    showToast("ส่งสำเร็จ! รอแอดมิน อวท. ตรวจสอบครับ"); // เปลี่ยนจาก alert
+                    input.value = ""; 
                 }
             } catch (error) {
-                alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
+                showToast("เกิดข้อผิดพลาดในการส่งข้อมูล สายไฟอาจหลวม!"); // เปลี่ยนจาก alert
             } finally {
                 btn.disabled = false;
                 btn.innerText = "ส่งข้อความ";
             }
         }
 
-        // ฟังก์ชันกดเติมไฟ
         async function upvote(id) {
             const btn = document.getElementById(`btn-${id}`);
             btn.disabled = true;
@@ -176,21 +217,18 @@
                 
                 const result = await response.json();
                 if(result.status === "success") {
-                    // ประทับตราในเครื่องว่าโหวตแล้ว
                     localStorage.setItem('voted_' + id, true);
-                    
-                    // ดึงตัวเลขเดิมมาบวก 1 โชว์ที่หน้าจอทันที
                     let currentVote = parseInt(btn.innerText.match(/\d+/)[0]);
                     btn.innerText = `🔥 โหวตแล้ว (${currentVote + 1})`;
+                    showToast("เติมไฟให้เพื่อนเรียบร้อย!"); // เปลี่ยนจาก alert
                 }
             } catch (error) {
-                alert("กดโหวตไม่สำเร็จ ลองใหม่นะ");
+                showToast("กดโหวตไม่สำเร็จ ลองใหม่นะ"); // เปลี่ยนจาก alert
                 btn.disabled = false;
                 btn.innerText = "🔥 เติมไฟ";
             }
         }
 
-        // สั่งให้ดึงข้อมูลเลยตอนเปิดหน้าเว็บ
         loadData();
     </script>
 </body>
