@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>???????????? ???.</title>
+    <title>กระดานเติมไฟ อวท.</title>
     <style>
-        /* --- ?????????????????? --- */
+        /* --- ตั้งค่าสีและดีไซน์ --- */
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #121212; 
@@ -22,7 +22,7 @@
             padding-bottom: 10px; 
         }
         
-        /* ????????????????? */
+        /* กล่องพิมพ์ข้อความ */
         .input-box { background: #1e1e1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         textarea { 
             width: 100%; height: 80px; 
@@ -33,7 +33,7 @@
         }
         textarea:focus { outline: none; border-color: #ff5722; }
         
-        /* ?????????????? */
+        /* ปุ่มส่งข้อความ */
         button { 
             background: #ff5722; color: white; 
             border: none; padding: 10px 15px; 
@@ -43,7 +43,7 @@
         button:hover { background: #e64a19; }
         button:disabled { background: #555; cursor: not-allowed; }
         
-        /* ???????????????????????? */
+        /* ฟีดข้อความที่อนุมัติแล้ว */
         .feed { display: flex; flex-direction: column; gap: 15px; }
         .card { 
             background: #1e1e1e; padding: 15px; 
@@ -52,7 +52,7 @@
         .card-meta { font-size: 0.8em; color: #888; margin-bottom: 8px; }
         .card-text { font-size: 1.1em; line-height: 1.4; margin-bottom: 15px; }
         
-        /* ?????????? */
+        /* ปุ่มเติมไฟ */
         .card-actions { display: flex; justify-content: flex-end; }
         .btn-fire { 
             background: transparent; border: 1px solid #ff5722; 
@@ -64,24 +64,24 @@
 </head>
 <body>
     <div class="container">
-        <h1>?? ???????????? ???.</h1>
+        <h1>🔥 กระดานเติมไฟ อวท.</h1>
         
         <div class="input-box">
-            <textarea id="msgInput" placeholder="??????????????? ???????????????????????... (???????????????????????)"></textarea>
-            <button id="sendBtn" onclick="sendMessage()">??????????</button>
+            <textarea id="msgInput" placeholder="พิมพ์ข้อเสนอแนะ หรือระบายความในใจที่นี่... (แอดมินคัดกรองก่อนขึ้นจอ)"></textarea>
+            <button id="sendBtn" onclick="sendMessage()">ส่งข้อความ</button>
         </div>
 
-        <div id="loading" style="text-align: center; color: #ff5722; display: none;">???????????????... ?</div>
+        <div id="loading" style="text-align: center; color: #ff5722; display: none;">กำลังโหลดข้อมูล... ⏳</div>
 
         <div class="feed" id="feedContainer">
             </div>
     </div>
 
     <script>
-        // ?? ????????: ??? URL ????????? Apps Script ??????????????????????????????????!
-        const API_URL = "???_URL_WEB_APP_??????";
+        // 🚨 สำคัญมาก: เอา URL ที่ได้จาก Apps Script มาใส่ในเครื่องหมายคำพูดข้างล่างนี้!
+        const API_URL = "ใส่_URL_WEB_APP_ตรงนี้";
 
-        // ????????????? Google Sheets ????????????????
+        // โหลดข้อมูลจาก Google Sheets ทันทีที่เปิดเว็บ
         async function loadData() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('feedContainer').innerHTML = '';
@@ -90,34 +90,34 @@
                 const response = await fetch(API_URL);
                 const data = await response.json();
                 
-                // ????????????????????????? (???????????????????)
+                // เอาข้อความมาลูปสร้างกล่อง (แสดงผลจากล่างขึ้นบน)
                 data.forEach(item => {
                     createCard(item);
                 });
             } catch (error) {
                 console.error("Error:", error);
-                document.getElementById('feedContainer').innerHTML = '<p style="color:red; text-align:center;">??????????????????????????</p>';
+                document.getElementById('feedContainer').innerHTML = '<p style="color:red; text-align:center;">ระบบหลังบ้านกำลังซ่อมบำรุง</p>';
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
         }
 
-        // ???????????????????????
+        // ฟังก์ชันวาดกล่องข้อความ
         function createCard(item) {
             const feed = document.getElementById('feedContainer');
             const card = document.createElement('div');
             card.className = 'card';
             
-            // ??????????
+            // แปลงวันที่
             const date = new Date(item.timestamp).toLocaleDateString('th-TH');
             
-            // ???? LocalStorage ?????????????????????????????????????????
+            // เช็ค LocalStorage ว่าเครื่องนี้เคยกดโหวตข้อความนี้ไปหรือยัง
             const isVoted = localStorage.getItem('voted_' + item.id);
-            const btnText = isVoted ? `?? ???????? (${item.upvote})` : `?? ?????? (${item.upvote})`;
+            const btnText = isVoted ? `🔥 โหวตแล้ว (${item.upvote})` : `🔥 เติมไฟ (${item.upvote})`;
             const btnDisabled = isVoted ? 'disabled' : '';
 
             card.innerHTML = `
-                <div class="card-meta">?? ${date}</div>
+                <div class="card-meta">📅 ${date}</div>
                 <div class="card-text">${item.message}</div>
                 <div class="card-actions">
                     <button class="btn-fire" id="btn-${item.id}" ${btnDisabled} onclick="upvote(${item.id})">
@@ -125,23 +125,23 @@
                     </button>
                 </div>
             `;
-            feed.prepend(card); // ??????????????????????????
+            feed.prepend(card); // ดันข้อความใหม่สุดไว้ข้างบน
         }
 
-        // ???????????????????????
+        // ฟังก์ชันส่งข้อความระบาย
         async function sendMessage() {
             const input = document.getElementById('msgInput');
             const btn = document.getElementById('sendBtn');
             const msg = input.value.trim();
 
             if (!msg) {
-                alert("??????????????????????????!");
+                alert("พิมพ์อะไรสักหน่อยสิวัยรุ่น!");
                 return;
             }
 
-            // ???????????????????????
+            // ตัดสวิตช์ปุ่มกันกดเบิ้ล
             btn.disabled = true;
-            btn.innerText = "????????... ?";
+            btn.innerText = "กำลังส่ง... ⏳";
 
             try {
                 const response = await fetch(API_URL, {
@@ -151,22 +151,22 @@
                 
                 const result = await response.json();
                 if(result.status === "success") {
-                    alert("????????????????! ???????? ???. ????????????????????????");
-                    input.value = ""; // ????????????????
+                    alert("ส่งข้อความสำเร็จ! รอแอดมิน อวท. ตรวจสอบก่อนขึ้นบอร์ดครับ");
+                    input.value = ""; // เคลียร์ช่องพิมพ์
                 }
             } catch (error) {
-                alert("????????????????????????????");
+                alert("เกิดข้อผิดพลาดในการส่งข้อมูล");
             } finally {
                 btn.disabled = false;
-                btn.innerText = "??????????";
+                btn.innerText = "ส่งข้อความ";
             }
         }
 
-        // ????????????????
+        // ฟังก์ชันกดเติมไฟ
         async function upvote(id) {
             const btn = document.getElementById(`btn-${id}`);
             btn.disabled = true;
-            btn.innerText = "???????????... ??";
+            btn.innerText = "กำลังเติมไฟ... 🔥";
 
             try {
                 const response = await fetch(API_URL, {
@@ -176,21 +176,21 @@
                 
                 const result = await response.json();
                 if(result.status === "success") {
-                    // ?????????????????????????????
+                    // ประทับตราในเครื่องว่าโหวตแล้ว
                     localStorage.setItem('voted_' + id, true);
                     
-                    // ?????????????????? 1 ??????????????????
+                    // ดึงตัวเลขเดิมมาบวก 1 โชว์ที่หน้าจอทันที
                     let currentVote = parseInt(btn.innerText.match(/\d+/)[0]);
-                    btn.innerText = `?? ???????? (${currentVote + 1})`;
+                    btn.innerText = `🔥 โหวตแล้ว (${currentVote + 1})`;
                 }
             } catch (error) {
-                alert("??????????????? ?????????");
+                alert("กดโหวตไม่สำเร็จ ลองใหม่นะ");
                 btn.disabled = false;
-                btn.innerText = "?? ??????";
+                btn.innerText = "🔥 เติมไฟ";
             }
         }
 
-        // ??????????????????????????????????
+        // สั่งให้ดึงข้อมูลเลยตอนเปิดหน้าเว็บ
         loadData();
     </script>
 </body>
