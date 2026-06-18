@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>กระดานเติมไฟ อวท.</title>
-    <!-- นำเข้า Font Kanit จาก Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23ff5722%22>🔥</text></svg>">
     <style>
         /* --- ตั้งค่าสีและดีไซน์ --- */
         body { 
-            /* เปลี่ยนมาใช้ฟอนต์ Kanit */
             font-family: 'Kanit', sans-serif; 
             background-color: #121212; 
             color: #ffffff; 
@@ -35,7 +33,7 @@
             border: 1px solid #444; border-radius: 4px; 
             padding: 10px; box-sizing: border-box; 
             resize: none; margin-bottom: 10px; 
-            font-family: 'Kanit', sans-serif; /* บังคับฟอนต์ในกล่องพิมพ์ */
+            font-family: 'Kanit', sans-serif; 
             font-size: 1em;
         }
         textarea:focus { outline: none; border-color: #ff5722; }
@@ -66,11 +64,12 @@
         .btn-fire { 
             background: transparent; border: 1px solid #ff5722; 
             color: #ff5722; width: auto; padding: 5px 15px; border-radius: 20px; 
+            font-family: 'Kanit', sans-serif;
         }
         .btn-fire:hover:not(:disabled) { background: #ff5722; color: white; }
         .btn-fire:disabled { border-color: #555; color: #555; background: transparent; }
 
-        /* --- ระบบแจ้งเตือน (Toast) แทน Alert เดิม --- */
+        /* --- ระบบแจ้งเตือน (Toast) --- */
         #toast {
             visibility: hidden;
             min-width: 250px;
@@ -109,23 +108,18 @@
         <div id="loading" style="text-align: center; color: #ff5722; display: none;">กำลังโหลดข้อมูล... ⏳</div>
 
         <div class="feed" id="feedContainer">
-            <!-- ข้อมูลจะถูกดึงมาโชว์ตรงนี้ -->
-        </div>
+            </div>
     </div>
 
-    <!-- กล่องแสดงข้อความแจ้งเตือน (แทน Alert) -->
     <div id="toast">ข้อความแจ้งเตือน</div>
 
     <script>
-        // 🚨 วาง URL API ของท่านตรงนี้
         const API_URL = "https://script.google.com/macros/s/AKfycbyMiIeWM-IEo5E41cCnVcIgKQjhvfhJ5WIXDQdTysjFZqKoFgh-sNiMpkl9kIVDKmhVFw/exec";
 
-        // ฟังก์ชันควบคุมการโชว์แจ้งเตือน (Toast)
         function showToast(message) {
             const toast = document.getElementById("toast");
             toast.innerText = message;
             toast.classList.add("show");
-            // ตั้งเวลาให้ไฟดับเองใน 3 วินาที
             setTimeout(() => {
                 toast.classList.remove("show");
             }, 3000);
@@ -172,7 +166,7 @@
             feed.prepend(card);
         }
 
-async function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('msgInput');
             const btn = document.getElementById('sendBtn');
             const msg = input.value.trim();
@@ -186,14 +180,12 @@ async function sendMessage() {
             btn.innerText = "กำลังส่ง... ⏳";
 
             try {
-                // ⚡️ ใส่เกียร์โหมด no-cors: ยิงไฟทะลวงบล็อก ไม่ต้องรอใบเสร็จ!
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
                     body: JSON.stringify({ action: "add", message: msg })
                 });
                 
-                // ถ้ายิงผ่าน ถือว่าสำเร็จเลย!
                 showToast("ส่งสำเร็จ! รอแอดมิน อวท. ตรวจสอบครับ"); 
                 input.value = ""; 
             } catch (error) {
@@ -210,47 +202,19 @@ async function sendMessage() {
             btn.innerText = "กำลังเติมไฟ... 🔥";
 
             try {
-                // ⚡️ ใส่เกียร์โหมด no-cors เช่นกัน
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({ action: "upvote", id: id })
                 });
                 
-                // ถ้ายิงผ่าน ถือว่าสำเร็จ! สับคัตเอาต์ประทับตราล็อกปุ่มทันที
                 localStorage.setItem('voted_' + id, true);
                 let currentVote = parseInt(btn.innerText.match(/\d+/)[0]);
                 btn.innerText = `🔥 โหวตแล้ว (${currentVote + 1})`;
                 showToast("เติมไฟให้เพื่อนเรียบร้อย!"); 
-                
-                // 🚨 สังเกตว่าเราจะไม่เขียนคำสั่งปลดล็อกปุ่ม (btn.disabled = false) ตรงนี้แล้วครับ มันจะถูกล็อกถาวร!
             } catch (error) {
                 showToast("กดโหวตไม่สำเร็จ เน็ตหลุดหรือเปล่า?"); 
-                btn.disabled = false; // จะปลดล็อกให้กดใหม่ก็ต่อเมื่อเน็ตพังจริงๆ เท่านั้น
-                btn.innerText = "🔥 เติมไฟ";
-            }
-        }
-        async function upvote(id) {
-            const btn = document.getElementById(`btn-${id}`);
-            btn.disabled = true;
-            btn.innerText = "กำลังเติมไฟ... 🔥";
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: "upvote", id: id })
-                });
-                
-                const result = await response.json();
-                if(result.status === "success") {
-                    localStorage.setItem('voted_' + id, true);
-                    let currentVote = parseInt(btn.innerText.match(/\d+/)[0]);
-                    btn.innerText = `🔥 โหวตแล้ว (${currentVote + 1})`;
-                    showToast("เติมไฟให้เพื่อนเรียบร้อย!"); // เปลี่ยนจาก alert
-                }
-            } catch (error) {
-                showToast("กดโหวตไม่สำเร็จ ลองใหม่นะ"); // เปลี่ยนจาก alert
-                btn.disabled = false;
+                btn.disabled = false; 
                 btn.innerText = "🔥 เติมไฟ";
             }
         }
