@@ -17,95 +17,87 @@
         }
         .container { max-width: 550px; margin: 0 auto; }
         
-        /* หัวข้อแบบมินิมอล ไม่เน้นสีฉูดฉาด */
         h1 { 
-            text-align: left; 
+            text-align: center; 
             color: #ffffff; 
-            font-size: 1.6em;
+            font-size: 1.5em;
             font-weight: 500;
             margin-bottom: 24px;
             letter-spacing: 0.5px;
         }
         
-        /* กล่องอินพุต */
-        .input-box { background: #1a1a1a; padding: 16px; border-radius: 8px; margin-bottom: 24px; }
+        /* กล่องอินพุตสำหรับ 3 คำถาม */
+        .input-box { background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #262626; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.9em; color: #ff5722; margin-bottom: 8px; font-weight: 400; }
+        
         textarea { 
-            width: 100%; height: 70px; 
-            background: transparent; color: #fff; 
-            border: none;
-            resize: none; margin-bottom: 12px; 
+            width: 100%; height: 60px; 
+            background: #121212; color: #fff; 
+            border: 1px solid #262626; border-radius: 6px;
+            resize: none; 
             font-family: 'Kanit', sans-serif; 
             font-size: 0.95em;
             font-weight: 300;
-            padding: 0;
+            padding: 10px;
+            box-sizing: border-box;
+            transition: 0.2s;
         }
-        textarea:focus { outline: none; }
+        textarea:focus { outline: none; border-color: #ff5722; background: #1a1a1a; }
         
-        /* ปุ่มส่งข้อความแบบเรียบๆ */
+        /* กล่องหมายเหตุ */
+        .remark {
+            font-size: 0.75em; color: #777; line-height: 1.5; 
+            margin-top: 15px; padding-top: 15px; border-top: 1px solid #262626;
+            text-align: justify;
+        }
+
+        /* ปุ่มส่งข้อความ */
         .btn-send { 
             background: #ff5722; color: white; 
-            border: none; padding: 8px 16px; 
+            border: none; padding: 8px 20px; 
             border-radius: 6px; cursor: pointer; 
-            font-weight: 400; width: auto; float: right;
+            font-weight: 400; width: 100%; margin-top: 10px;
             font-family: 'Kanit', sans-serif;
-            font-size: 0.9em;
+            font-size: 1em;
             transition: background 0.2s;
         }
         .btn-send:hover { background: #e64a19; }
         .btn-send:disabled { background: #333; color: #777; cursor: not-allowed; }
-        .input-box::after { content: ""; display: table; clear: both; } /* เคลียร์ float */
         
         /* ฟีดข้อความ */
-        .feed { display: flex; flex-direction: column; gap: 16px; }
+        .feed { display: flex; flex-direction: column; gap: 16px; margin-top: 30px; }
         .card { 
-            background: #1a1a1a; padding: 16px; 
-            border-radius: 8px; border-left: 2px solid #ff5722; /* เส้นขอบบางลงสไตล์มินิมอล */
+            background: #1a1a1a; padding: 20px; 
+            border-radius: 8px; border-left: 2px solid #ff5722; 
         }
-        .card-meta { font-size: 0.75em; color: #666; margin-bottom: 8px; }
-        .card-text { font-size: 1em; line-height: 1.6; margin-bottom: 12px; color: #ffffff; font-weight: 300; }
+        .card-meta { font-size: 0.75em; color: #666; margin-bottom: 12px; border-bottom: 1px solid #262626; padding-bottom: 8px; }
         
-        .card-actions { display: flex; justify-content: flex-end; }
+        /* การแสดงผลเนื้อหา 3 ข้อในการ์ด */
+        .card-content-block { margin-bottom: 12px; }
+        .card-content-label { color: #ff5722; font-size: 0.85em; margin-bottom: 4px; }
+        .card-text { font-size: 0.95em; line-height: 1.5; color: #ffffff; font-weight: 300; margin: 0; }
         
-        /* ปุ่มโหวตแบบไร้กล่องข้อความรกๆ */
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        
+        /* ปุ่มโหวตแบบมินิมอล */
         .btn-fire { 
-            background: transparent; 
-            border: 1px solid #333; 
-            color: #ff5722; 
-            padding: 4px 12px; 
-            border-radius: 16px; 
-            font-family: 'Kanit', sans-serif;
-            font-size: 0.85em;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: transparent; border: 1px solid #333; 
+            color: #ff5722; padding: 4px 12px; border-radius: 16px; 
+            font-family: 'Kanit', sans-serif; font-size: 0.85em;
+            cursor: pointer; transition: all 0.2s;
         }
         .btn-fire:hover:not(:disabled) { border-color: #ff5722; background: rgba(255,87,34,0.05); }
-        
-        /* สไตล์ปุ่มตอนที่กดโหวตไปแล้ว */
-        .btn-fire:disabled { 
-            border-color: #262626; 
-            color: #555; 
-            background: transparent; 
-            cursor: not-allowed; 
-        }
+        .btn-fire:disabled { border-color: #262626; color: #555; background: transparent; cursor: not-allowed; }
 
         /* ระบบแจ้งเตือน (Toast) */
         #toast {
-            visibility: hidden;
-            background-color: #262626;
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px 20px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-weight: 300;
-            font-size: 0.9em;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s;
+            visibility: hidden; background-color: #262626; color: #fff;
+            text-align: center; border-radius: 6px; padding: 10px 20px;
+            position: fixed; z-index: 1000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-weight: 300; font-size: 0.9em;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.3s;
         }
         #toast.show { visibility: visible; bottom: 40px; opacity: 1; }
         #loading { text-align: center; color: #666; font-size: 0.9em; display: none; }
@@ -116,11 +108,27 @@
         <h1>กระดานแสดงความคิดเห็น อวท.</h1>
         
         <div class="input-box">
-            <textarea id="msgInput" placeholder="แชร์ความคิดเห็นหรือข้อเสนอแนะของคุณที่นี่..."></textarea>
-            <button class="btn-send" id="sendBtn" onclick="sendMessage()">ส่ง</button>
+            <div class="input-group">
+                <label>1. ความต้องการ</label>
+                <textarea id="q1Input" placeholder="ระบุสิ่งที่ต้องการ..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>2. ปัญหาที่เกิดหรือพบเจอ</label>
+                <textarea id="q2Input" placeholder="ระบุปัญหาที่เกิดขึ้น..."></textarea>
+            </div>
+            <div class="input-group">
+                <label>3. วิธีแนวทางแก้ปัญหาเรื่องนี้</label>
+                <textarea id="q3Input" placeholder="เสนอแนวทางแก้ไข..."></textarea>
+            </div>
+            
+            <button class="btn-send" id="sendBtn" onclick="sendMessage()">ส่งข้อมูล</button>
+            
+            <div class="remark">
+                หมายเหตุ ขอให้ผู้ที่แสดงความความคิดเห็นสามารถแสดงความคิดเห็นได้ และขอให้ตอบให้ครบทั้ง 3 ข้อ เพื่อทางคณะกรรมการ องค์การนักวิชาชีพนักอนาคตแห่งประเทศไทย วิทยาลัยการอาชีพด่านซ้าย จะได้นำไปแก้ไขปัญหาได้ตรงจุดและรวดเร็ว ขอขอบพระคุณทุกความเห็น อวท.วก.ดช.ขอบคุณครับ
+            </div>
         </div>
 
-        <div id="loading">กำลังโหลด...</div>
+        <div id="loading">กำลังโหลดข้อมูล...</div>
 
         <div class="feed" id="feedContainer">
             </div>
@@ -162,13 +170,28 @@
             const date = new Date(item.timestamp).toLocaleDateString('th-TH');
             const isVoted = localStorage.getItem('voted_' + item.id);
             
-            // ปรับปุ่มให้ Minimal ตามสั่ง: ก่อนกดมีเครื่องหมาย +, หลังกดโชว์แค่รูปไฟ
             const btnText = isVoted ? `🔥 ${item.upvote}` : `+ 🔥 ${item.upvote}`;
             const btnDisabled = isVoted ? 'disabled' : '';
 
+            // วาดการ์ดให้แสดงข้อมูลทั้ง 3 ส่วนแยกกันชัดเจน
             card.innerHTML = `
-                <div class="card-meta">${date}</div>
-                <div class="card-text">${item.message}</div>
+                <div class="card-meta">📅 วันที่: ${date}</div>
+                
+                <div class="card-content-block">
+                    <div class="card-content-label">ความต้องการ:</div>
+                    <p class="card-text">${item.q1}</p>
+                </div>
+                
+                <div class="card-content-block">
+                    <div class="card-content-label">ปัญหาที่พบ:</div>
+                    <p class="card-text">${item.q2 || '-'}</p>
+                </div>
+                
+                <div class="card-content-block">
+                    <div class="card-content-label">แนวทางแก้ไข:</div>
+                    <p class="card-text">${item.q3 || '-'}</p>
+                </div>
+
                 <div class="card-actions">
                     <button class="btn-fire" id="btn-${item.id}" ${btnDisabled} onclick="upvote(${item.id})">
                         ${btnText}
@@ -179,31 +202,38 @@
         }
 
         async function sendMessage() {
-            const input = document.getElementById('msgInput');
+            // ดึงค่าจากทั้ง 3 ช่อง
+            const q1 = document.getElementById('q1Input').value.trim();
+            const q2 = document.getElementById('q2Input').value.trim();
+            const q3 = document.getElementById('q3Input').value.trim();
             const btn = document.getElementById('sendBtn');
-            const msg = input.value.trim();
 
-            if (!msg) {
-                showToast("โปรดพิมพ์ข้อความก่อนส่ง");
+            // บังคับกรอกให้ครบทั้ง 3 ช่อง
+            if (!q1 || !q2 || !q3) {
+                showToast("กรุณากรอกข้อมูลให้ครบทั้ง 3 ข้อครับ");
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "...";
+            btn.innerText = "กำลังส่ง...";
 
             try {
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
-                    body: JSON.stringify({ action: "add", message: msg })
+                    // ส่งข้อมูล q1, q2, q3 ไปให้ Google Apps Script
+                    body: JSON.stringify({ action: "add", q1: q1, q2: q2, q3: q3 }) 
                 });
                 showToast("ส่งความคิดเห็นแล้ว (รอการตรวจสอบ)"); 
-                input.value = ""; 
+                // เคลียร์ช่องพิมพ์ทั้งหมด
+                document.getElementById('q1Input').value = ""; 
+                document.getElementById('q2Input').value = ""; 
+                document.getElementById('q3Input').value = ""; 
             } catch (error) {
                 showToast("เกิดข้อผิดพลาด กรุณาลองใหม่"); 
             } finally {
                 btn.disabled = false;
-                btn.innerText = "ส่ง";
+                btn.innerText = "ส่งข้อมูล";
             }
         }
 
@@ -225,7 +255,7 @@
                 });
                 
                 localStorage.setItem('voted_' + id, true);
-                btn.innerText = `🔥 ${currentVote + 1}`; // เปลี่ยนเป็นรูปไฟกับตัวเลขอย่างเดียวหลังกด
+                btn.innerText = `🔥 ${currentVote + 1}`;
                 showToast("บันทึกการโหวตแล้ว"); 
             } catch (error) {
                 showToast("เกิดข้อผิดพลาด กรุณาลองใหม่"); 
