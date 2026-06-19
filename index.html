@@ -113,6 +113,29 @@
         }
         #toast.show { visibility: visible; bottom: 40px; opacity: 1; }
         #loading { text-align: center; color: #666; font-size: 0.9em; display: none; }
+
+        /* --- แต่ง Scrollbar ให้เข้ากับธีม Dark Minimal --- */
+        
+        /* สำหรับ Chrome, Edge, Safari */
+        ::-webkit-scrollbar {
+            width: 8px; /* ปรับให้บางลง */
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a; /* สีพื้นหลังรางเลื่อน กลืนกับสีพื้นเว็บ */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #262626; /* สีตัวเลื่อนเป็นสีเทาเข้ม */
+            border-radius: 10px; /* ลบมุมให้โค้งมน */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff5722; /* พอเอาเมาส์ไปชี้ ให้เรืองแสงเป็นสีส้มของ อวท. */
+        }
+
+        /* สำหรับ Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #262626 #0a0a0a;
+        }
     </style>
 </head>
 <body>
