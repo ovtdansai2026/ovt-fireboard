@@ -20,7 +20,7 @@
         h1 { 
             text-align: center; 
             color: #ffffff; 
-            font-size: 1.6em; /* ขยายหัวข้อเว็บขึ้นนิดนึงให้ดูแกรนด์ */
+            font-size: 1.6em; 
             font-weight: 500;
             margin-bottom: 24px;
             letter-spacing: 0.5px;
@@ -28,9 +28,7 @@
         
         /* กล่องอินพุตสำหรับ 3 คำถาม */
         .input-box { background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #262626; }
-        
         .input-group { margin-bottom: 15px; }
-        
         .row { display: flex; gap: 15px; margin-bottom: 15px; }
         .col { flex: 1; display: flex; flex-direction: column; }
         
@@ -46,7 +44,7 @@
             border: 1px solid #262626; border-radius: 6px;
             resize: none; 
             font-family: 'Kanit', sans-serif; 
-            font-size: 0.95em; /* ปรับฟอนต์ตอนพิมพ์ให้ใหญ่ขึ้นนิดนึง */
+            font-size: 0.95em; 
             font-weight: 300;
             padding: 10px;
             box-sizing: border-box;
@@ -55,77 +53,100 @@
         textarea::placeholder { color: #555; }
         textarea:focus { outline: none; border-color: #ff5722; background: #1a1a1a; }
         
-        /* กล่องหมายเหตุ */
         .remark {
             font-size: 0.8em; color: #777; line-height: 1.5; 
             margin-top: 15px; padding-top: 15px; border-top: 1px solid #262626;
             text-align: justify;
         }
 
-        /* ปุ่มส่งข้อความ */
         .btn-send { 
             background: #ff5722; color: white; 
             border: none; padding: 10px 20px; 
             border-radius: 6px; cursor: pointer; 
             font-weight: 400; width: 100%; margin-top: 5px;
             font-family: 'Kanit', sans-serif;
-            font-size: 1.05em; /* ให้ปุ่มส่งดูเด่นขึ้น */
+            font-size: 1.05em; 
             transition: background 0.2s;
         }
         .btn-send:hover { background: #e64a19; }
         .btn-send:disabled { background: #333; color: #777; cursor: not-allowed; }
         
-        /* ฟีดข้อความ */
+        /* --- ดีไซน์การ์ดแบบใหม่ (Accordion UX) --- */
         .feed { display: flex; flex-direction: column; gap: 16px; margin-top: 30px; }
         .card { 
-            background: #1a1a1a; padding: 20px; 
-            border-radius: 8px; border-left: 2px solid #ff5722; 
+            background: #1a1a1a; padding: 16px 20px; 
+            border-radius: 12px; border: 1px solid #262626;
+            transition: all 0.3s ease;
         }
-        .card-meta { font-size: 0.8em; color: #666; margin-bottom: 12px; border-bottom: 1px solid #262626; padding-bottom: 8px; }
+        .card:hover { border-color: #333; }
         
-        /* การแสดงผลเนื้อหา 3 ข้อในการ์ด */
-        .card-content-block { margin-bottom: 14px; } /* เพิ่มระยะห่างระหว่างข้อ */
+        /* ส่วนหัวการ์ด (Avatar + Date + Vote) */
+        .card-header { 
+            display: flex; justify-content: space-between; align-items: flex-start; 
+            border-bottom: 1px solid #262626; padding-bottom: 12px; margin-bottom: 12px;
+        }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar { 
+            background: #2a2a2a; color: #888; width: 38px; height: 38px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.2em; border: 1px solid #333;
+        }
+        .card-meta { font-size: 0.75em; color: #666; margin-top: 2px; }
+        .username { font-size: 0.9em; color: #fff; font-weight: 400; }
+
+        /* เนื้อหาหลัก (ความต้องการ) ที่แสดงตลอดเวลา */
+        .card-main-content { margin-bottom: 5px; }
+        
+        /* ส่วนขยาย (ปัญหาและแนวทาง) ที่ซ่อนไว้ */
+        .expandable-content { 
+            display: none; 
+            margin-top: 15px; padding-top: 15px; 
+            border-top: 1px dashed #333;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .expandable-content.show { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-content-block { margin-bottom: 14px; } 
         .card-content-label { color: #ff5722; font-size: 0.85em; margin-bottom: 6px; font-weight: 400; }
         
-        /* 🚨 ไฮไลท์การแก้บั๊ก "ทะลุกล่อง" และการปรับฟอนต์ */
         .card-text { 
-            font-size: 1em; /* ขยายเนื้อหาให้อ่านง่ายขึ้น */
-            line-height: 1.6; 
-            color: #ffffff; 
-            font-weight: 300; 
-            margin: 0; 
-            
-            /* คำสั่งเวทมนตร์ ป้องกันข้อความทะลุกรอบ และรักษาย่อหน้า */
-            white-space: pre-wrap; 
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            word-break: break-word;
+            font-size: 1em; line-height: 1.6; color: #e0e0e0; font-weight: 300; margin: 0; 
+            white-space: pre-wrap; word-wrap: break-word;
+            overflow-wrap: break-word; word-break: break-word;
         }
         
-        .card-actions { display: flex; justify-content: flex-end; margin-top: 15px; }
+        /* ปุ่มสับสวิตช์กางข้อมูล (Toggle) */
+        .btn-toggle {
+            background: #222; border: none; color: #aaa; width: 100%;
+            padding: 8px 0; margin-top: 12px; border-radius: 6px;
+            font-family: 'Kanit', sans-serif; font-size: 0.85em;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-toggle:hover { background: #2a2a2a; color: #ff5722; }
         
-        /* ปุ่มโหวตแบบมินิมอล */
+        /* ปุ่มโหวต */
         .btn-fire { 
             background: transparent; border: 1px solid #333; 
             color: #ff5722; padding: 4px 12px; border-radius: 16px; 
             font-family: 'Kanit', sans-serif; font-size: 0.85em;
             cursor: pointer; transition: all 0.2s;
         }
-        .btn-fire:hover:not(:disabled) { border-color: #ff5722; background: rgba(255,87,34,0.05); }
+        .btn-fire:hover:not(:disabled) { border-color: #ff5722; background: rgba(255,87,34,0.1); }
         .btn-fire:disabled { border-color: #262626; color: #555; background: transparent; cursor: not-allowed; }
 
         /* ระบบแจ้งเตือน (Toast) */
         #toast {
-            visibility: hidden; background-color: #262626; color: #fff;
+            visibility: hidden; background-color: #ff5722; color: #fff;
             text-align: center; border-radius: 6px; padding: 10px 20px;
             position: fixed; z-index: 1000; left: 50%; bottom: 30px;
-            transform: translateX(-50%); font-weight: 300; font-size: 0.9em;
+            transform: translateX(-50%); font-weight: 400; font-size: 0.9em;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.3s;
         }
         #toast.show { visibility: visible; bottom: 40px; opacity: 1; }
         #loading { text-align: center; color: #666; font-size: 0.9em; display: none; }
 
-        /* --- แต่ง Scrollbar ให้เข้ากับธีม Dark Minimal --- */
+        /* แต่ง Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
@@ -164,7 +185,8 @@
         <div id="loading">กำลังโหลดข้อมูล...</div>
 
         <div class="feed" id="feedContainer">
-            </div>
+            <!-- ข้อมูลจะแสดงตรงนี้ -->
+        </div>
     </div>
 
     <div id="toast">ข้อความแจ้งเตือน</div>
@@ -195,6 +217,20 @@
             }
         }
 
+        // ฟังก์ชันสำหรับเปิด/ปิดกล่องรายละเอียด (Toggle Switch)
+        function toggleDetails(id) {
+            const content = document.getElementById(`content-${id}`);
+            const btn = document.getElementById(`toggleBtn-${id}`);
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                btn.innerHTML = `อ่านรายละเอียดเพิ่มเติม 🔽`;
+            } else {
+                content.classList.add('show');
+                btn.innerHTML = `ซ่อนรายละเอียด 🔼`;
+            }
+        }
+
         function createCard(item) {
             const feed = document.getElementById('feedContainer');
             const card = document.createElement('div');
@@ -206,29 +242,49 @@
             const btnText = isVoted ? `🔥 ${item.upvote}` : `+ 🔥 ${item.upvote}`;
             const btnDisabled = isVoted ? 'disabled' : '';
 
+            // ใช้ไอคอนสุ่มสนุกๆ หรือใช้เงาดำ 👤 เพื่อความเป็น Anonymous
+            const avatars = ['👤', '🕵️', '🤖', '👻', '👾', '👽'];
+            const randomAvatar = avatars[item.id % avatars.length]; // สุ่มไอคอนตามเลข ID
+
             card.innerHTML = `
-                <div class="card-meta">📅 วันที่: ${date}</div>
-                
-                <div class="card-content-block">
-                    <div class="card-content-label">ความต้องการ:</div>
-                    <div class="card-text">${item.q1}</div>
+                <!-- ส่วนหัวการ์ด -->
+                <div class="card-header">
+                    <div class="user-info">
+                        <div class="avatar">${randomAvatar}</div>
+                        <div>
+                            <div class="username">เสียงสะท้อนนิรนาม</div>
+                            <div class="card-meta">${date}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn-fire" id="btn-${item.id}" ${btnDisabled} onclick="upvote(${item.id})">
+                            ${btnText}
+                        </button>
+                    </div>
                 </div>
                 
-                <div class="card-content-block">
-                    <div class="card-content-label">ปัญหาที่พบ:</div>
-                    <div class="card-text">${item.q2 || '-'}</div>
+                <!-- ใจความหลัก (โชว์เสมอ) -->
+                <div class="card-main-content">
+                    <div class="card-content-label" style="color:#fff;">ความต้องการ:</div>
+                    <div class="card-text" style="color:#ff9800;">${item.q1}</div>
                 </div>
                 
-                <div class="card-content-block">
-                    <div class="card-content-label">แนวทางแก้ไข:</div>
-                    <div class="card-text">${item.q3 || '-'}</div>
+                <!-- ข้อมูลที่ซ่อนไว้ (ปัญหา + แนวทาง) -->
+                <div class="expandable-content" id="content-${item.id}">
+                    <div class="card-content-block">
+                        <div class="card-content-label">ปัญหาที่พบ:</div>
+                        <div class="card-text">${item.q2 || '-'}</div>
+                    </div>
+                    <div class="card-content-block" style="margin-bottom:0;">
+                        <div class="card-content-label">แนวทางแก้ไข:</div>
+                        <div class="card-text">${item.q3 || '-'}</div>
+                    </div>
                 </div>
 
-                <div class="card-actions">
-                    <button class="btn-fire" id="btn-${item.id}" ${btnDisabled} onclick="upvote(${item.id})">
-                        ${btnText}
-                    </button>
-                </div>
+                <!-- ปุ่มกดกาง/หุบ -->
+                <button class="btn-toggle" id="toggleBtn-${item.id}" onclick="toggleDetails(${item.id})">
+                    อ่านรายละเอียดเพิ่มเติม 🔽
+                </button>
             `;
             feed.prepend(card);
         }
