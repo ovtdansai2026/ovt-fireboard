@@ -53,10 +53,11 @@
         textarea::placeholder { color: #555; }
         textarea:focus { outline: none; border-color: #ff5722; background: #1a1a1a; }
         
+        /* 🚨 แก้ไขจุดบั๊กเว้นวรรคแปลกๆ บนมือถือ ตรงนี้เรียบร้อยครับ */
         .remark {
             font-size: 0.8em; color: #777; line-height: 1.5; 
             margin-top: 15px; padding-top: 15px; border-top: 1px solid #262626;
-            text-align: justify;
+            text-align: left; /* เปลี่ยนจาก justify เป็น left เพื่อให้สระและวรรคตอนเกาะกลุ่มกันสวยงาม */
         }
 
         .btn-send { 
@@ -128,7 +129,7 @@
         /* 📢 กล่องสไตล์ไฮไลท์ข้อความตอบกลับจาก อวท. */
         .reply-box {
             background: #121212;
-            border-left: 2px solid #4caf50; /* ใช้ขอบสีเขียวเพื่อให้ต่างจากข้อเสนอแนะ */
+            border-left: 2px solid #4caf50; 
             padding: 12px 16px;
             border-radius: 6px;
             margin-top: 15px;
@@ -264,7 +265,6 @@
             const avatars = ['👤', '🕵️', '🤖', '👻', '👾', '👽'];
             const randomAvatar = avatars[item.id % avatars.length];
 
-            // วาดโครงสร้างการ์ดแนวตั้งแบบเดิม พร้อมเพิ่มกล่อง Reply จากฝั่ง API
             card.innerHTML = `
                 <div class="card-header">
                     <div class="user-info">
