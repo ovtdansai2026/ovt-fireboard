@@ -15,7 +15,7 @@
             margin: 0; 
             padding: 24px 16px; 
         }
-        .container { max-width: 550px; margin: 0 auto; }
+        .container { max-width: 700px; margin: 0 auto; } /* ขยายหน้ากากให้กว้างขึ้นนิดนึงเพื่อให้วาง 2 คอลัมน์สวยๆ */
         
         h1 { 
             text-align: center; 
@@ -32,7 +32,7 @@
         .row { display: flex; gap: 15px; margin-bottom: 15px; }
         .col { flex: 1; display: flex; flex-direction: column; }
         
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
             .row { flex-direction: column; gap: 15px; }
         }
 
@@ -71,33 +71,45 @@
         .btn-send:hover { background: #e64a19; }
         .btn-send:disabled { background: #333; color: #777; cursor: not-allowed; }
         
-        /* --- ดีไซน์การ์ดแบบใหม่ (Accordion UX) --- */
-        .feed { display: flex; flex-direction: column; gap: 16px; margin-top: 30px; }
+        /* 🚨 ปรับฟีดเป็น Grid แถวละ 2 คอลัมน์ตามสั่ง */
+        .feed { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 16px; 
+            margin-top: 30px; 
+        }
+        
+        /* ถ้าเป็นจอมือถือเล็ก ให้ยุบเหลือแถวละ 1 คอลัมน์อัตโนมัติ */
+        @media (max-width: 600px) {
+            .feed { grid-template-columns: 1fr; }
+        }
+
         .card { 
             background: #1a1a1a; padding: 16px 20px; 
             border-radius: 12px; border: 1px solid #262626;
+            display: flex; flex-direction: column; justify-content: space-between;
             transition: all 0.3s ease;
         }
         .card:hover { border-color: #333; }
         
-        /* ส่วนหัวการ์ด (Avatar + Date + Vote) */
+        /* ส่วนหัวการ์ด */
         .card-header { 
             display: flex; justify-content: space-between; align-items: flex-start; 
             border-bottom: 1px solid #262626; padding-bottom: 12px; margin-bottom: 12px;
         }
-        .user-info { display: flex; align-items: center; gap: 12px; }
+        .user-info { display: flex; align-items: center; gap: 10px; }
         .avatar { 
-            background: #2a2a2a; color: #888; width: 38px; height: 38px; 
+            background: #2a2a2a; color: #888; width: 34px; height: 34px; 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 1.2em; border: 1px solid #333;
+            font-size: 1.1em; border: 1px solid #333; flex-shrink: 0;
         }
         .card-meta { font-size: 0.75em; color: #666; margin-top: 2px; }
-        .username { font-size: 0.9em; color: #fff; font-weight: 400; }
+        .username { font-size: 0.85em; color: #fff; font-weight: 400; }
 
-        /* เนื้อหาหลัก (ความต้องการ) ที่แสดงตลอดเวลา */
-        .card-main-content { margin-bottom: 5px; }
+        /* เนื้อหาหลัก (ความต้องการ) เด่นและใหญ่ขึ้น */
+        .card-main-content { flex-grow: 1; }
         
-        /* ส่วนขยาย (ปัญหาและแนวทาง) ที่ซ่อนไว้ */
+        /* ส่วนขยายที่ซ่อนไว้ */
         .expandable-content { 
             display: none; 
             margin-top: 15px; padding-top: 15px; 
@@ -110,17 +122,28 @@
         .card-content-block { margin-bottom: 14px; } 
         .card-content-label { color: #ff5722; font-size: 0.85em; margin-bottom: 6px; font-weight: 400; }
         
+        /* 🚨 จูนฟอนต์ข้อความหลักให้เด่นและหนาขึ้น */
+        .card-text-main {
+            font-size: 1.05em; 
+            line-height: 1.5; 
+            color: #ff9800; /* สีส้มเรืองแสงเด่นๆ */
+            font-weight: 500; /* ปรับระดับความหนา */
+            margin: 0; 
+            white-space: pre-wrap; word-wrap: break-word;
+            overflow-wrap: break-word; word-break: break-word;
+        }
+
         .card-text { 
-            font-size: 1em; line-height: 1.6; color: #e0e0e0; font-weight: 300; margin: 0; 
+            font-size: 0.95em; line-height: 1.5; color: #e0e0e0; font-weight: 300; margin: 0; 
             white-space: pre-wrap; word-wrap: break-word;
             overflow-wrap: break-word; word-break: break-word;
         }
         
-        /* ปุ่มสับสวิตช์กางข้อมูล (Toggle) */
+        /* ปุ่มสับสวิตช์กางข้อมูล */
         .btn-toggle {
             background: #222; border: none; color: #aaa; width: 100%;
-            padding: 8px 0; margin-top: 12px; border-radius: 6px;
-            font-family: 'Kanit', sans-serif; font-size: 0.85em;
+            padding: 8px 0; margin-top: 15px; border-radius: 6px;
+            font-family: 'Kanit', sans-serif; font-size: 0.8em;
             cursor: pointer; transition: 0.2s;
         }
         .btn-toggle:hover { background: #2a2a2a; color: #ff5722; }
@@ -128,8 +151,8 @@
         /* ปุ่มโหวต */
         .btn-fire { 
             background: transparent; border: 1px solid #333; 
-            color: #ff5722; padding: 4px 12px; border-radius: 16px; 
-            font-family: 'Kanit', sans-serif; font-size: 0.85em;
+            color: #ff5722; padding: 4px 10px; border-radius: 16px; 
+            font-family: 'Kanit', sans-serif; font-size: 0.8em;
             cursor: pointer; transition: all 0.2s;
         }
         .btn-fire:hover:not(:disabled) { border-color: #ff5722; background: rgba(255,87,34,0.1); }
@@ -185,8 +208,7 @@
         <div id="loading">กำลังโหลดข้อมูล...</div>
 
         <div class="feed" id="feedContainer">
-            <!-- ข้อมูลจะแสดงตรงนี้ -->
-        </div>
+            </div>
     </div>
 
     <div id="toast">ข้อความแจ้งเตือน</div>
@@ -211,13 +233,12 @@
                 data.forEach(item => { createCard(item); });
             } catch (error) {
                 console.error("Error:", error);
-                document.getElementById('feedContainer').innerHTML = '<p style="color:#555; text-align:center; font-size:0.9em;">ระบบไม่พร้อมใช้งานชั่วคราว</p>';
+                document.getElementById('feedContainer').innerHTML = '<p style="color:#555; text-align:center; font-size:0.9em; grid-column: span 2;">ระบบไม่พร้อมใช้งานชั่วคราว</p>';
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
         }
 
-        // ฟังก์ชันสำหรับเปิด/ปิดกล่องรายละเอียด (Toggle Switch)
         function toggleDetails(id) {
             const content = document.getElementById(`content-${id}`);
             const btn = document.getElementById(`toggleBtn-${id}`);
@@ -242,12 +263,10 @@
             const btnText = isVoted ? `🔥 ${item.upvote}` : `+ 🔥 ${item.upvote}`;
             const btnDisabled = isVoted ? 'disabled' : '';
 
-            // ใช้ไอคอนสุ่มสนุกๆ หรือใช้เงาดำ 👤 เพื่อความเป็น Anonymous
             const avatars = ['👤', '🕵️', '🤖', '👻', '👾', '👽'];
-            const randomAvatar = avatars[item.id % avatars.length]; // สุ่มไอคอนตามเลข ID
+            const randomAvatar = avatars[item.id % avatars.length];
 
             card.innerHTML = `
-                <!-- ส่วนหัวการ์ด -->
                 <div class="card-header">
                     <div class="user-info">
                         <div class="avatar">${randomAvatar}</div>
@@ -263,13 +282,10 @@
                     </div>
                 </div>
                 
-                <!-- ใจความหลัก (โชว์เสมอ) -->
                 <div class="card-main-content">
-                    <div class="card-content-label" style="color:#fff;">ความต้องการ:</div>
-                    <div class="card-text" style="color:#ff9800;">${item.q1}</div>
+                    <div class="card-text-main">${item.q1}</div>
                 </div>
                 
-                <!-- ข้อมูลที่ซ่อนไว้ (ปัญหา + แนวทาง) -->
                 <div class="expandable-content" id="content-${item.id}">
                     <div class="card-content-block">
                         <div class="card-content-label">ปัญหาที่พบ:</div>
@@ -281,7 +297,6 @@
                     </div>
                 </div>
 
-                <!-- ปุ่มกดกาง/หุบ -->
                 <button class="btn-toggle" id="toggleBtn-${item.id}" onclick="toggleDetails(${item.id})">
                     อ่านรายละเอียดเพิ่มเติม 🔽
                 </button>
