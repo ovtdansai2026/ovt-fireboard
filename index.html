@@ -20,7 +20,7 @@
         h1 { 
             text-align: center; 
             color: #ffffff; 
-            font-size: 1.5em;
+            font-size: 1.6em; /* ขยายหัวข้อเว็บขึ้นนิดนึงให้ดูแกรนด์ */
             font-weight: 500;
             margin-bottom: 24px;
             letter-spacing: 0.5px;
@@ -31,11 +31,9 @@
         
         .input-group { margin-bottom: 15px; }
         
-        /* จัด Layout ให้ข้อ 2 และ 3 อยู่ข้างกัน */
         .row { display: flex; gap: 15px; margin-bottom: 15px; }
         .col { flex: 1; display: flex; flex-direction: column; }
         
-        /* ถ้าเปิดในมือถือจอเล็ก ให้มันเรียงซ้อนกันอัตโนมัติ */
         @media (max-width: 480px) {
             .row { flex-direction: column; gap: 15px; }
         }
@@ -48,19 +46,18 @@
             border: 1px solid #262626; border-radius: 6px;
             resize: none; 
             font-family: 'Kanit', sans-serif; 
-            font-size: 0.9em;
+            font-size: 0.95em; /* ปรับฟอนต์ตอนพิมพ์ให้ใหญ่ขึ้นนิดนึง */
             font-weight: 300;
             padding: 10px;
             box-sizing: border-box;
             transition: 0.2s;
         }
-        /* ข้อความจางๆ Placeholder สีอ่อนลงหน่อยให้ดูคลีน */
         textarea::placeholder { color: #555; }
         textarea:focus { outline: none; border-color: #ff5722; background: #1a1a1a; }
         
         /* กล่องหมายเหตุ */
         .remark {
-            font-size: 0.75em; color: #777; line-height: 1.5; 
+            font-size: 0.8em; color: #777; line-height: 1.5; 
             margin-top: 15px; padding-top: 15px; border-top: 1px solid #262626;
             text-align: justify;
         }
@@ -72,7 +69,7 @@
             border-radius: 6px; cursor: pointer; 
             font-weight: 400; width: 100%; margin-top: 5px;
             font-family: 'Kanit', sans-serif;
-            font-size: 1em;
+            font-size: 1.05em; /* ให้ปุ่มส่งดูเด่นขึ้น */
             transition: background 0.2s;
         }
         .btn-send:hover { background: #e64a19; }
@@ -84,14 +81,28 @@
             background: #1a1a1a; padding: 20px; 
             border-radius: 8px; border-left: 2px solid #ff5722; 
         }
-        .card-meta { font-size: 0.75em; color: #666; margin-bottom: 12px; border-bottom: 1px solid #262626; padding-bottom: 8px; }
+        .card-meta { font-size: 0.8em; color: #666; margin-bottom: 12px; border-bottom: 1px solid #262626; padding-bottom: 8px; }
         
         /* การแสดงผลเนื้อหา 3 ข้อในการ์ด */
-        .card-content-block { margin-bottom: 12px; }
-        .card-content-label { color: #ff5722; font-size: 0.85em; margin-bottom: 4px; }
-        .card-text { font-size: 0.95em; line-height: 1.5; color: #ffffff; font-weight: 300; margin: 0; }
+        .card-content-block { margin-bottom: 14px; } /* เพิ่มระยะห่างระหว่างข้อ */
+        .card-content-label { color: #ff5722; font-size: 0.85em; margin-bottom: 6px; font-weight: 400; }
         
-        .card-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+        /* 🚨 ไฮไลท์การแก้บั๊ก "ทะลุกล่อง" และการปรับฟอนต์ */
+        .card-text { 
+            font-size: 1em; /* ขยายเนื้อหาให้อ่านง่ายขึ้น */
+            line-height: 1.6; 
+            color: #ffffff; 
+            font-weight: 300; 
+            margin: 0; 
+            
+            /* คำสั่งเวทมนตร์ ป้องกันข้อความทะลุกรอบ และรักษาย่อหน้า */
+            white-space: pre-wrap; 
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .card-actions { display: flex; justify-content: flex-end; margin-top: 15px; }
         
         /* ปุ่มโหวตแบบมินิมอล */
         .btn-fire { 
@@ -115,27 +126,11 @@
         #loading { text-align: center; color: #666; font-size: 0.9em; display: none; }
 
         /* --- แต่ง Scrollbar ให้เข้ากับธีม Dark Minimal --- */
-        
-        /* สำหรับ Chrome, Edge, Safari */
-        ::-webkit-scrollbar {
-            width: 8px; /* ปรับให้บางลง */
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a; /* สีพื้นหลังรางเลื่อน กลืนกับสีพื้นเว็บ */
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #262626; /* สีตัวเลื่อนเป็นสีเทาเข้ม */
-            border-radius: 10px; /* ลบมุมให้โค้งมน */
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ff5722; /* พอเอาเมาส์ไปชี้ ให้เรืองแสงเป็นสีส้มของ อวท. */
-        }
-
-        /* สำหรับ Firefox */
-        * {
-            scrollbar-width: thin;
-            scrollbar-color: #262626 #0a0a0a;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff5722; }
+        * { scrollbar-width: thin; scrollbar-color: #262626 #0a0a0a; }
     </style>
 </head>
 <body>
@@ -216,17 +211,17 @@
                 
                 <div class="card-content-block">
                     <div class="card-content-label">ความต้องการ:</div>
-                    <p class="card-text">${item.q1}</p>
+                    <div class="card-text">${item.q1}</div>
                 </div>
                 
                 <div class="card-content-block">
                     <div class="card-content-label">ปัญหาที่พบ:</div>
-                    <p class="card-text">${item.q2 || '-'}</p>
+                    <div class="card-text">${item.q2 || '-'}</div>
                 </div>
                 
                 <div class="card-content-block">
                     <div class="card-content-label">แนวทางแก้ไข:</div>
-                    <p class="card-text">${item.q3 || '-'}</p>
+                    <div class="card-text">${item.q3 || '-'}</div>
                 </div>
 
                 <div class="card-actions">
