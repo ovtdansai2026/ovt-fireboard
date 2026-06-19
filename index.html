@@ -30,7 +30,17 @@
         .input-box { background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #262626; }
         
         .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 0.9em; color: #ff5722; margin-bottom: 8px; font-weight: 400; }
+        
+        /* จัด Layout ให้ข้อ 2 และ 3 อยู่ข้างกัน */
+        .row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .col { flex: 1; display: flex; flex-direction: column; }
+        
+        /* ถ้าเปิดในมือถือจอเล็ก ให้มันเรียงซ้อนกันอัตโนมัติ */
+        @media (max-width: 480px) {
+            .row { flex-direction: column; gap: 15px; }
+        }
+
+        label { display: block; font-size: 0.9em; color: #ff5722; margin-bottom: 8px; font-weight: 400; }
         
         textarea { 
             width: 100%; height: 60px; 
@@ -38,12 +48,14 @@
             border: 1px solid #262626; border-radius: 6px;
             resize: none; 
             font-family: 'Kanit', sans-serif; 
-            font-size: 0.95em;
+            font-size: 0.9em;
             font-weight: 300;
             padding: 10px;
             box-sizing: border-box;
             transition: 0.2s;
         }
+        /* ข้อความจางๆ Placeholder สีอ่อนลงหน่อยให้ดูคลีน */
+        textarea::placeholder { color: #555; }
         textarea:focus { outline: none; border-color: #ff5722; background: #1a1a1a; }
         
         /* กล่องหมายเหตุ */
@@ -56,9 +68,9 @@
         /* ปุ่มส่งข้อความ */
         .btn-send { 
             background: #ff5722; color: white; 
-            border: none; padding: 8px 20px; 
+            border: none; padding: 10px 20px; 
             border-radius: 6px; cursor: pointer; 
-            font-weight: 400; width: 100%; margin-top: 10px;
+            font-weight: 400; width: 100%; margin-top: 5px;
             font-family: 'Kanit', sans-serif;
             font-size: 1em;
             transition: background 0.2s;
@@ -110,15 +122,18 @@
         <div class="input-box">
             <div class="input-group">
                 <label>1. ความต้องการ</label>
-                <textarea id="q1Input" placeholder="ระบุสิ่งที่ต้องการ..."></textarea>
+                <textarea id="q1Input" placeholder="เช่น: อยากให้เพิ่มจุดทิ้งขยะแยกประเภทตามอาคารเรียน"></textarea>
             </div>
-            <div class="input-group">
-                <label>2. ปัญหาที่เกิดหรือพบเจอ</label>
-                <textarea id="q2Input" placeholder="ระบุปัญหาที่เกิดขึ้น..."></textarea>
-            </div>
-            <div class="input-group">
-                <label>3. วิธีแนวทางแก้ปัญหาเรื่องนี้</label>
-                <textarea id="q3Input" placeholder="เสนอแนวทางแก้ไข..."></textarea>
+            
+            <div class="row">
+                <div class="col">
+                    <label>2. ปัญหาที่เกิดหรือพบเจอ</label>
+                    <textarea id="q2Input" placeholder="เช่น: ขยะล้นถัง ส่งกลิ่นเหม็น และไม่เพียงพอ"></textarea>
+                </div>
+                <div class="col">
+                    <label>3. วิธีแนวทางแก้ปัญหาเรื่องนี้</label>
+                    <textarea id="q3Input" placeholder="เช่น: เพิ่มถังขยะ และให้แต่ละแผนกจัดเวรช่วยดูแล"></textarea>
+                </div>
             </div>
             
             <button class="btn-send" id="sendBtn" onclick="sendMessage()">ส่งข้อมูล</button>
@@ -173,7 +188,6 @@
             const btnText = isVoted ? `🔥 ${item.upvote}` : `+ 🔥 ${item.upvote}`;
             const btnDisabled = isVoted ? 'disabled' : '';
 
-            // วาดการ์ดให้แสดงข้อมูลทั้ง 3 ส่วนแยกกันชัดเจน
             card.innerHTML = `
                 <div class="card-meta">📅 วันที่: ${date}</div>
                 
@@ -202,13 +216,11 @@
         }
 
         async function sendMessage() {
-            // ดึงค่าจากทั้ง 3 ช่อง
             const q1 = document.getElementById('q1Input').value.trim();
             const q2 = document.getElementById('q2Input').value.trim();
             const q3 = document.getElementById('q3Input').value.trim();
             const btn = document.getElementById('sendBtn');
 
-            // บังคับกรอกให้ครบทั้ง 3 ช่อง
             if (!q1 || !q2 || !q3) {
                 showToast("กรุณากรอกข้อมูลให้ครบทั้ง 3 ข้อครับ");
                 return;
@@ -221,11 +233,9 @@
                 await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors', 
-                    // ส่งข้อมูล q1, q2, q3 ไปให้ Google Apps Script
                     body: JSON.stringify({ action: "add", q1: q1, q2: q2, q3: q3 }) 
                 });
                 showToast("ส่งความคิดเห็นแล้ว (รอการตรวจสอบ)"); 
-                // เคลียร์ช่องพิมพ์ทั้งหมด
                 document.getElementById('q1Input').value = ""; 
                 document.getElementById('q2Input').value = ""; 
                 document.getElementById('q3Input').value = ""; 
