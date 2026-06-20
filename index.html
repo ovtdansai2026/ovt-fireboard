@@ -26,7 +26,6 @@
             letter-spacing: 0.5px;
         }
         
-        /* กล่องอินพุตสำหรับ 3 คำถาม */
         .input-box { background: #1a1a1a; padding: 20px; border-radius: 8px; margin-bottom: 24px; border: 1px solid #262626; }
         .input-group { margin-bottom: 15px; }
         .row { display: flex; gap: 15px; margin-bottom: 15px; }
@@ -53,11 +52,10 @@
         textarea::placeholder { color: #555; }
         textarea:focus { outline: none; border-color: #ff5722; background: #1a1a1a; }
         
-        /* 🚨 แก้ไขจุดบั๊กเว้นวรรคแปลกๆ บนมือถือ ตรงนี้เรียบร้อยครับ */
         .remark {
             font-size: 0.8em; color: #777; line-height: 1.5; 
             margin-top: 15px; padding-top: 15px; border-top: 1px solid #262626;
-            text-align: left; /* เปลี่ยนจาก justify เป็น left เพื่อให้สระและวรรคตอนเกาะกลุ่มกันสวยงาม */
+            text-align: left; 
         }
 
         .btn-send { 
@@ -71,9 +69,21 @@
         }
         .btn-send:hover { background: #e64a19; }
         .btn-send:disabled { background: #333; color: #777; cursor: not-allowed; }
+
+        /* 🚨 สไตล์ปุ่มแท็บ (สวิตช์เลือกย่านจัดเรียง) */
+        .tabs {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1; background: #1a1a1a; color: #888; border: 1px solid #262626;
+            padding: 10px; border-radius: 8px; font-family: 'Kanit', sans-serif;
+            font-size: 0.95em; font-weight: 400; cursor: pointer; transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: #2a2a2a; color: #ff5722; border-color: #ff5722; font-weight: 500;
+        }
         
-        /* ฟีดข้อความสเปกเดิม (แถวเดี่ยวลากยาวลื่นๆ) */
-        .feed { display: flex; flex-direction: column; gap: 16px; margin-top: 30px; }
+        .feed { display: flex; flex-direction: column; gap: 16px; }
         .card { 
             background: #1a1a1a; padding: 16px 20px; 
             border-radius: 12px; border: 1px solid #262626;
@@ -81,7 +91,6 @@
         }
         .card:hover { border-color: #333; }
         
-        /* ส่วนหัวการ์ด (Avatar + Date + Vote) */
         .card-header { 
             display: flex; justify-content: space-between; align-items: flex-start; 
             border-bottom: 1px solid #262626; padding-bottom: 12px; margin-bottom: 12px;
@@ -95,24 +104,16 @@
         .card-meta { font-size: 0.75em; color: #666; margin-top: 2px; }
         .username { font-size: 0.9em; color: #fff; font-weight: 400; }
 
-        /* กล่องแสดงผลใจความหลัก ตัวหนังสือใหญ่และเด่นสะดุดตา */
         .card-main-content { margin-bottom: 5px; }
         .card-text-main {
-            font-size: 1.05em;
-            line-height: 1.5;
-            color: #ff9800; /* สีส้มเด่นชัด */
-            font-weight: 500;
-            margin: 0;
-            white-space: pre-wrap; word-wrap: break-word;
+            font-size: 1.05em; line-height: 1.5; color: #ff9800; font-weight: 500;
+            margin: 0; white-space: pre-wrap; word-wrap: break-word;
             overflow-wrap: break-word; word-break: break-word;
         }
         
-        /* ส่วนขยายพับเก็บได้ */
         .expandable-content { 
-            display: none; 
-            margin-top: 15px; padding-top: 15px; 
-            border-top: 1px dashed #333;
-            animation: fadeIn 0.3s ease-in-out;
+            display: none; margin-top: 15px; padding-top: 15px; 
+            border-top: 1px dashed #333; animation: fadeIn 0.3s ease-in-out;
         }
         .expandable-content.show { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
@@ -126,19 +127,13 @@
             overflow-wrap: break-word; word-break: break-word;
         }
 
-        /* 📢 กล่องสไตล์ไฮไลท์ข้อความตอบกลับจาก อวท. */
         .reply-box {
-            background: #121212;
-            border-left: 2px solid #4caf50; 
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-top: 15px;
-            border: 1px solid #1e291e;
+            background: #121212; border-left: 2px solid #4caf50; 
+            padding: 12px 16px; border-radius: 6px; margin-top: 15px; border: 1px solid #1e291e;
         }
         .reply-label { color: #4caf50; font-size: 0.85em; font-weight: 500; margin-bottom: 4px; }
         .reply-text { font-size: 0.95em; line-height: 1.5; color: #ffffff; font-weight: 300; margin: 0; white-space: pre-wrap; }
         
-        /* ปุ่มสับสวิตช์กางข้อมูล (Toggle) */
         .btn-toggle {
             background: #222; border: none; color: #aaa; width: 100%;
             padding: 8px 0; margin-top: 12px; border-radius: 6px;
@@ -147,28 +142,21 @@
         }
         .btn-toggle:hover { background: #2a2a2a; color: #ff5722; }
         
-        /* ปุ่มโหวต */
         .btn-fire { 
-            background: transparent; border: 1px solid #333; 
-            color: #ff5722; padding: 4px 12px; border-radius: 16px; 
-            font-family: 'Kanit', sans-serif; font-size: 0.85em;
-            cursor: pointer; transition: all 0.2s;
+            background: transparent; border: 1px solid #333; color: #ff5722; padding: 4px 12px; border-radius: 16px; 
+            font-family: 'Kanit', sans-serif; font-size: 0.85em; cursor: pointer; transition: all 0.2s;
         }
         .btn-fire:hover:not(:disabled) { border-color: #ff5722; background: rgba(255,87,34,0.1); }
         .btn-fire:disabled { border-color: #262626; color: #555; background: transparent; cursor: not-allowed; }
 
-        /* ระบบแจ้งเตือน (Toast) */
         #toast {
-            visibility: hidden; background-color: #ff5722; color: #fff;
-            text-align: center; border-radius: 6px; padding: 10px 20px;
-            position: fixed; z-index: 1000; left: 50%; bottom: 30px;
-            transform: translateX(-50%); font-weight: 400; font-size: 0.9em;
+            visibility: hidden; background-color: #ff5722; color: #fff; text-align: center; border-radius: 6px; padding: 10px 20px;
+            position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 400; font-size: 0.9em;
             box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.3s;
         }
         #toast.show { visibility: visible; bottom: 40px; opacity: 1; }
-        #loading { text-align: center; color: #666; font-size: 0.9em; display: none; }
+        #loading { text-align: center; color: #666; font-size: 0.9em; display: none; margin-bottom: 20px; }
 
-        /* แต่ง Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
@@ -204,6 +192,11 @@
             </div>
         </div>
 
+        <div class="tabs" id="sortTabs" style="display: none;">
+            <button class="tab-btn active" id="tabLatest" onclick="switchTab('latest')">🕒 มาใหม่ล่าสุด</button>
+            <button class="tab-btn" id="tabTop" onclick="switchTab('top')">🔥 โหวตสูงสุด</button>
+        </div>
+
         <div id="loading">กำลังโหลดข้อมูล...</div>
 
         <div class="feed" id="feedContainer">
@@ -214,6 +207,10 @@
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyMiIeWM-IEo5E41cCnVcIgKQjhvfhJ5WIXDQdTysjFZqKoFgh-sNiMpkl9kIVDKmhVFw/exec";
+        
+        // 🚨 ตัวแปรเก็บข้อมูลหลังดึงมาจาก API เพื่อใช้ Sort หน้าบ้าน
+        let globalData = [];
+        let currentSort = 'latest';
 
         function showToast(message) {
             const toast = document.getElementById("toast");
@@ -225,17 +222,56 @@
         async function loadData() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('feedContainer').innerHTML = '';
+            document.getElementById('sortTabs').style.display = 'none'; // ซ่อนแท็บระหว่างโหลด
             
             try {
                 const response = await fetch(API_URL);
-                const data = await response.json();
-                data.forEach(item => { createCard(item); });
+                globalData = await response.json();
+                
+                if(globalData.length > 0) {
+                    document.getElementById('sortTabs').style.display = 'flex'; // โชว์แท็บเมื่อมีข้อมูล
+                }
+                
+                renderFeed(); // สั่งวาดการ์ด
             } catch (error) {
                 console.error("Error:", error);
                 document.getElementById('feedContainer').innerHTML = '<p style="color:#555; text-align:center; font-size:0.9em;">ระบบไม่พร้อมใช้งานชั่วคราว</p>';
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
+        }
+
+        // 🚨 ฟังก์ชันสับสวิตช์แท็บ
+        function switchTab(sortType) {
+            currentSort = sortType;
+            
+            // อัปเดตสีปุ่มให้สว่าง/ดับ
+            document.getElementById('tabLatest').classList.toggle('active', sortType === 'latest');
+            document.getElementById('tabTop').classList.toggle('active', sortType === 'top');
+            
+            renderFeed(); // วาดการ์ดใหม่ตามแบบที่เลือก
+        }
+
+        // 🚨 ฟังก์ชันเรียงข้อมูลและวาดหน้าจอ
+        function renderFeed() {
+            const feed = document.getElementById('feedContainer');
+            feed.innerHTML = ''; // ล้างกระดานเก่า
+            
+            let sortedData = [...globalData]; // ก๊อปปี้ข้อมูลมาจัดเรียง
+            
+            if (currentSort === 'top') {
+                // ย่าน 1: โหวตสูงสุด เรียงจากมากไปน้อย
+                sortedData.sort((a, b) => b.upvote - a.upvote);
+            } else {
+                // ย่าน 2: มาใหม่ล่าสุด เรียงตาม ID มากไปน้อย (สมมติ ID รันขึ้นเรื่อยๆ)
+                sortedData.sort((a, b) => b.id - a.id);
+            }
+
+            // วาดการ์ดลงกระดาน
+            sortedData.forEach(item => {
+                const card = createCardElement(item);
+                feed.appendChild(card);
+            });
         }
 
         function toggleDetails(id) {
@@ -251,8 +287,8 @@
             }
         }
 
-        function createCard(item) {
-            const feed = document.getElementById('feedContainer');
+        // ปรับเป็นฟังก์ชันที่ Return ตัว Card แทนที่จะเอาไปยัดตรงๆ
+        function createCardElement(item) {
             const card = document.createElement('div');
             card.className = 'card';
             
@@ -305,7 +341,7 @@
                     อ่านรายละเอียดเพิ่มเติม 🔽
                 </button>
             `;
-            feed.prepend(card);
+            return card;
         }
 
         async function sendMessage() {
@@ -358,6 +394,13 @@
                 });
                 
                 localStorage.setItem('voted_' + id, true);
+                
+                // 🚨 อัปเดตข้อมูลในหน่วยความจำ เพื่อให้ตอนสลับแท็บยอดไฟไม่หาย
+                const itemIndex = globalData.findIndex(item => item.id === id);
+                if (itemIndex > -1) {
+                    globalData[itemIndex].upvote = currentVote + 1;
+                }
+
                 btn.innerText = `🔥 ${currentVote + 1}`;
                 showToast("บันทึกการโหวตแล้ว"); 
             } catch (error) {
