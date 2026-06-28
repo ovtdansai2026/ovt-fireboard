@@ -70,7 +70,7 @@
         .btn-send:hover { background: #e64a19; }
         .btn-send:disabled { background: #333; color: #777; cursor: not-allowed; }
 
-        /* 🚨 สไตล์ปุ่มแท็บ (สวิตช์เลือกย่านจัดเรียง) */
+        /* ปุ่มแท็บเลือกย่านจัดเรียง */
         .tabs {
             display: flex; gap: 10px; margin-bottom: 20px;
         }
@@ -149,6 +149,13 @@
         .btn-fire:hover:not(:disabled) { border-color: #ff5722; background: rgba(255,87,34,0.1); }
         .btn-fire:disabled { border-color: #262626; color: #555; background: transparent; cursor: not-allowed; }
 
+        /* สไตล์ปุ่มแอดมิน */
+        .btn-admin {
+            background: transparent; border: 1px solid #333; color: #999; padding: 6px 12px; border-radius: 6px;
+            font-family: 'Kanit', sans-serif; font-size: 0.8em; cursor: pointer; transition: 0.2s;
+        }
+        .btn-admin:hover { border-color: #ff5722; color: #ff5722; }
+
         #toast {
             visibility: hidden; background-color: #ff5722; color: #fff; text-align: center; border-radius: 6px; padding: 10px 20px;
             position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 400; font-size: 0.9em;
@@ -166,8 +173,34 @@
 </head>
 <body>
     <div class="container">
+        <!-- เมนูแอดมินสำหรับเข้าสู่ระบบ -->
+        <div style="text-align: right; margin-bottom: 12px;">
+            <button id="adminToggleBtn" class="btn-admin" onclick="toggleAdminBox()">🔑 แอดมินเข้าระบบ</button>
+        </div>
+
+        <!-- กล่องล็อกอินสำหรับแอดมิน -->
+        <div id="adminLoginBox" class="input-box" style="display: none; max-width: 280px; margin: 0 auto 24px auto; padding: 16px;">
+            <label style="color: #ff5722; margin-bottom: 6px;">รหัสผ่านผู้ดูแลระบบ</label>
+            <input type="password" id="adminPasswordInput" placeholder="พิมพ์รหัสผ่าน..." style="width:100%; padding:8px; background:#121212; border:1px solid #262626; border-radius:6px; color:#fff; font-family:'Kanit', sans-serif; box-sizing:border-box; margin-bottom:12px;">
+            <button class="btn-send" onclick="loginAdmin()" style="margin:0;">ยืนยันสิทธิ์</button>
+        </div>
+
         <h1>กระดานแสดงความคิดเห็น อวท.</h1>
+
+        <!-- 🛠️ แดชบอร์ดแอดมิน (จะแสดงเฉพาะหลังล็อกอินสำเร็จเท่านั้น) -->
+        <div id="adminDashboard" class="input-box" style="display: none; border-color: #4caf50;">
+            <h3 style="margin: 0 0 16px 0; color: #4caf50; font-weight: 500; display: flex; justify-content: space-between; align-items: center; font-size: 1.1em;">
+                <span>🛠️ ระบบจัดการหลังบ้านแอดมิน</span>
+                <span id="pendingBadge" style="background: #e64a19; color: white; font-size: 0.75em; padding: 2px 8px; border-radius: 12px;">รอตรวจ 0</span>
+            </h3>
+            <div class="tabs">
+                <button class="tab-btn active" id="tabAdminPending" onclick="switchAdminTab('pending')">📥 รายการรอตรวจ</button>
+                <button class="tab-btn" id="tabAdminRejected" onclick="switchAdminTab('rejected')">❌ รายการที่ปฏิเสธ</button>
+            </div>
+            <div id="adminFeedContainer" class="feed"></div>
+        </div>
         
+        <!-- กล่องส่งข้อมูลสำหรับนักเรียนทั่วไป -->
         <div class="input-box">
             <div class="input-group">
                 <label>1. ความต้องการ</label>
@@ -197,10 +230,9 @@
             <button class="tab-btn" id="tabTop" onclick="switchTab('top')">🔥 โหวตสูงสุด</button>
         </div>
 
-        <div id="loading">กำลังโหลดข้อมูล...</div>
+        <div id="loading">กำลังดำเนินการข้อมูล...</div>
 
-        <div class="feed" id="feedContainer">
-            </div>
+        <div class="feed" id="feedContainer"></div>
     </div>
 
     <div id="toast">ข้อความแจ้งเตือน</div>
@@ -208,14 +240,24 @@
 <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbyMiIeWM-IEo5E41cCnVcIgKQjhvfhJ5WIXDQdTysjFZqKoFgh-sNiMpkl9kIVDKmhVFw/exec";
         
-        // ตัวแปรเก็บข้อมูลหลังดึงมาจาก API เพื่อใช้ Sort หน้าบ้าน
         let globalData = [];
+        let globalAdminData = []; 
         let currentSort = 'latest';
+        let currentAdminTab = 'pending'; 
+        let adminPassword = ''; 
         
-        // ⏱️ ตัวแปรตั้งเวลาดีเลย์ (60 วินาที)
         const COOLDOWN_SECONDS = 60; 
 
-        // 🚨 ด่าน 1.1: ฟังก์ชันเช็กตอนเปิดเว็บ (กันเด็กรีเฟรชหนีการล็อกปุ่ม)
+        // คำนวณตรวจสอบรหัสผ่าน (เก็บเฉพาะค่าแฮช ป้องกันคำดิบรั่วไหลใน GitHub)
+        function getHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = Math.imul(31, hash) + str.charCodeAt(i) | 0;
+            }
+            return hash;
+        }
+
+        // เช็คการสแปมตอนเริ่มต้นหน้าเว็บ
         function checkCooldown() {
             const lastSubmit = localStorage.getItem('lastSubmitTime');
             if (lastSubmit) {
@@ -223,12 +265,11 @@
                 if (timePassed < COOLDOWN_SECONDS) {
                     startCountdown(COOLDOWN_SECONDS - timePassed);
                 } else {
-                    localStorage.removeItem('lastSubmitTime'); // หมดเวลาแล้ว เคลียร์ทิ้ง
+                    localStorage.removeItem('lastSubmitTime');
                 }
             }
         }
 
-        // 🚨 ด่าน 1.2: ตัวนับถอยหลังและล็อกปุ่มหน้าจอ
         function startCountdown(secondsLeft) {
             const btn = document.getElementById('sendBtn');
             btn.disabled = true;
@@ -253,6 +294,39 @@
             setTimeout(() => { toast.classList.remove("show"); }, 2500);
         }
 
+        // โหมดดึงข้อมูลบอร์ดสำหรับแอดมิน (สามารถเห็นรายการที่ปฏิเสธและรอตรวจทั้งหมดได้)
+        async function loadAdminData() {
+            document.getElementById('loading').style.display = 'block';
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "admin_get_all", password: adminPassword })
+                });
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    globalAdminData = result.data;
+                    renderAdminDashboard();
+                    
+                    // อัปเดตข้อมูลของฝั่งบอร์ดสาธารณะควบคู่ไปด้วยกัน (กรองเฉพาะกลุ่มที่อนุมัติ)
+                    globalData = globalAdminData.filter(item => item.status === "อนุมัติ" || item.status === "ผ่าน");
+                    if(globalData.length > 0) {
+                        document.getElementById('sortTabs').style.display = 'flex';
+                    }
+                    renderFeed();
+                } else {
+                    showToast(result.msg || "สิทธิ์เข้าถึงไม่ถูกต้อง");
+                    logoutAdmin();
+                }
+            } catch (error) {
+                console.error("Admin Load Error:", error);
+                showToast("ไม่สามารถเรียกข้อมูลเบื้องหลังได้");
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // โหมดดึงข้อมูลสำหรับเด็ก/บุคคลทั่วไป
         async function loadData() {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('feedContainer').innerHTML = '';
@@ -275,6 +349,184 @@
             }
         }
 
+        // ระบบควบคุมสิทธิ์แอดมิน
+        function toggleAdminBox() {
+            const box = document.getElementById('adminLoginBox');
+            box.style.display = box.style.display === 'none' ? 'block' : 'none';
+            if(box.style.display === 'block') {
+                document.getElementById('adminPasswordInput').focus();
+            }
+        }
+
+        function loginAdmin() {
+            const inputVal = document.getElementById('adminPasswordInput').value;
+            const hashResult = getHash(inputVal);
+            
+            // เปรียบเทียบกับรหัสผ่านแฮชความปลอดภัยทางเดียว
+            if (hashResult === 106139376) {
+                adminPassword = inputVal;
+                sessionStorage.setItem('adminSessionPass', inputVal);
+                document.getElementById('adminLoginBox').style.display = 'none';
+                document.getElementById('adminPasswordInput').value = '';
+                showToast("ปลดล็อกแดชบอร์ดแอดมินสำเร็จ");
+                updateAdminUI(true);
+                loadAdminData();
+            } else {
+                showToast("รหัสผ่านไม่ถูกต้อง");
+            }
+        }
+
+        function logoutAdmin() {
+            adminPassword = '';
+            sessionStorage.removeItem('adminSessionPass');
+            showToast("ออกจากระบบแอดมินแล้ว");
+            updateAdminUI(false);
+            loadData();
+        }
+
+        function updateAdminUI(isLoggedIn) {
+            const btn = document.getElementById('adminToggleBtn');
+            const db = document.getElementById('adminDashboard');
+            if(isLoggedIn) {
+                btn.innerHTML = "🚪 ออกจากระบบแอดมิน";
+                btn.setAttribute('onclick', 'logoutAdmin()');
+                db.style.display = 'block';
+            } else {
+                btn.innerHTML = "🔑 แอดมินเข้าระบบ";
+                btn.setAttribute('onclick', 'toggleAdminBox()');
+                db.style.display = 'none';
+            }
+        }
+
+        function switchAdminTab(tabName) {
+            currentAdminTab = tabName;
+            document.getElementById('tabAdminPending').classList.toggle('active', tabName === 'pending');
+            document.getElementById('tabAdminRejected').classList.toggle('active', tabName === 'rejected');
+            renderAdminDashboard();
+        }
+
+        function renderAdminDashboard() {
+            const container = document.getElementById('adminFeedContainer');
+            container.innerHTML = '';
+            
+            const pendingItems = globalAdminData.filter(item => item.status === "รอตรวจ");
+            const rejectedItems = globalAdminData.filter(item => item.status === "ปฏิเสธ");
+            
+            document.getElementById('pendingBadge').innerText = `รอตรวจ ${pendingItems.length}`;
+            
+            const targetItems = currentAdminTab === 'pending' ? pendingItems : rejectedItems;
+            
+            if (targetItems.length === 0) {
+                container.innerHTML = '<p style="color:#555; text-align:center; font-size:0.9em; padding:20px 0;">ไม่มีข้อมูลให้แสดงในส่วนนี้</p>';
+                return;
+            }
+            
+            // เรียงรายการล่าสุดขึ้นก่อน
+            targetItems.sort((a, b) => b.id - a.id);
+            
+            targetItems.forEach(item => {
+                const card = createAdminCard(item);
+                container.appendChild(card);
+            });
+        }
+
+        function createAdminCard(item) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            const date = new Date(item.timestamp).toLocaleDateString('th-TH');
+            const avatars = ['👤', '🕵️', '🤖', '👻', '👾', '👽'];
+            const randomAvatar = avatars[item.id % avatars.length];
+
+            if (currentAdminTab === 'pending') {
+                card.style.borderColor = '#ff9800';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar">${randomAvatar}</div>
+                            <div>
+                                <div class="username" style="color: #ff9800;">เรื่องร้องเรียนใหม่ (ID: ${item.id})</div>
+                                <div class="card-meta">${date}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-main-content">
+                        <div class="card-content-label">1. ความต้องการ:</div>
+                        <div class="card-text" style="color: #fff; font-size: 1.05em; margin-bottom: 12px; font-weight:500;">${item.q1}</div>
+                    </div>
+                    <div class="card-content-block">
+                        <div class="card-content-label">2. ปัญหาที่พบ:</div>
+                        <div class="card-text" style="margin-bottom: 12px;">${item.q2}</div>
+                    </div>
+                    <div class="card-content-block">
+                        <div class="card-content-label">3. แนวทางแก้ไข:</div>
+                        <div class="card-text" style="margin-bottom: 12px;">${item.q3}</div>
+                    </div>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #262626;">
+                        <label style="color:#bbb; font-size:0.85em; display:block; margin-bottom:6px;">เขียนข้อความเพื่อตอบกลับ อวท. (คอลัมน์ G):</label>
+                        <textarea id="adminReplyText-${item.id}" placeholder="พิมพ์คำชี้แจงเพื่อส่งถึงผู้ร้องเรียน..." style="height:60px; margin-bottom:12px;"></textarea>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-send" style="background:#4caf50; margin:0; flex:1;" onclick="submitAdminDecision(${item.id}, 'อนุมัติ')">✅ อนุมัติและขึ้นบอร์ด</button>
+                            <button class="btn-send" style="background:#f44336; margin:0; flex:1;" onclick="submitAdminDecision(${item.id}, 'ปฏิเสธ')">❌ ปฏิเสธ</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                card.style.borderColor = '#f44336';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="user-info">
+                            <div class="avatar">${randomAvatar}</div>
+                            <div>
+                                <div class="username" style="color: #f44336;">ถูกปฏิเสธแล้ว (ID: ${item.id})</div>
+                                <div class="card-meta">${date}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-main-content">
+                        <div class="card-text-main" style="color: #888; font-size: 0.95em;">${item.q1}</div>
+                    </div>
+                    <div style="margin-top:12px; display:flex; gap:10px;">
+                        <button class="btn-fire" style="border-color:#ff9800; color:#ff9800;" onclick="submitAdminDecision(${item.id}, 'รอตรวจ')">🔄 ย้อนสถานะเป็นรอตรวจ</button>
+                        <button class="btn-fire" style="border-color:#4caf50; color:#4caf50;" onclick="submitAdminDecision(${item.id}, 'อนุมัติ')">✅ ย้ายไปอนุมัติ</button>
+                    </div>
+                `;
+            }
+            return card;
+        }
+
+        // แอดมินบันทึกการประเมิน
+        async function submitAdminDecision(id, statusState) {
+            const replyBox = document.getElementById(`adminReplyText-${id}`) || document.getElementById(`boardReplyText-${id}`);
+            const replyContent = replyBox ? replyBox.value.trim() : '';
+
+            document.getElementById('loading').style.display = 'block';
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "admin_update",
+                        password: adminPassword,
+                        id: id,
+                        status: statusState,
+                        reply: replyContent
+                    })
+                });
+                const result = await response.json();
+                if(result.status === "success") {
+                    showToast(`ดำเนินการอัปเดตโพสต์ ID: ${id} แล้ว`);
+                    await loadAdminData(); // รีเฟรชข้อมูลแดชบอร์ดแอดมินใหม่ทันที
+                } else {
+                    showToast(result.msg || "ไม่สามารถทำรายการได้");
+                }
+            } catch (error) {
+                console.error("Admin Update Error:", error);
+                showToast("มีปัญหากับการอัปเดตระบบหลังบ้าน");
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // ระบบบอร์ดข้อมูลหลัก
         function switchTab(sortType) {
             currentSort = sortType;
             document.getElementById('tabLatest').classList.toggle('active', sortType === 'latest');
@@ -326,6 +578,21 @@
             const avatars = ['👤', '🕵️', '🤖', '👻', '👾', '👽'];
             const randomAvatar = avatars[item.id % avatars.length];
 
+            // 🚨 ตรวจสอบสิทธิ์และสวิตช์เครื่องมือของแอดมินบนตัวการ์ดหน้าบอร์ดสาธารณะ (รองรับเผื่อแอดมินกดผิด หรือต้องการปฏิเสธ/เขียนคำชี้แจงแก้ไขโพสต์ที่กำลังแสดงผลอยู่ได้ทันที)
+            let adminToolsSection = '';
+            if (adminPassword) {
+                adminToolsSection = `
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #444; text-align: left;">
+                        <span style="color:#4caf50; font-size:0.85em; font-weight:500; display:block; margin-bottom:6px;">🔧 จัดการด่วนหน้าบอร์ด (แอดมิน):</span>
+                        <textarea id="boardReplyText-${item.id}" placeholder="แก้ไขคำตอบตอบกลับ..." style="height:50px; margin-bottom:10px; width:100%; box-sizing:border-box;">${item.reply === "⏳ รอการตอบกลับจาก อวท." ? "" : item.reply}</textarea>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-fire" style="border-color:#4caf50; color:#4caf50;" onclick="submitAdminDecision(${item.id}, 'อนุมัติ')">💾 บันทึกคำตอบใหม่</button>
+                            <button class="btn-fire" style="border-color:#f44336; color:#f44336;" onclick="submitAdminDecision(${item.id}, 'ปฏิเสธ')">❌ ปฏิเสธ/ถอดจากบอร์ด</button>
+                        </div>
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 <div class="card-header">
                     <div class="user-info">
@@ -365,6 +632,8 @@
                 <button class="btn-toggle" id="toggleBtn-${item.id}" onclick="toggleDetails(${item.id})">
                     อ่านรายละเอียดเพิ่มเติม 🔽
                 </button>
+
+                ${adminToolsSection}
             `;
             return card;
         }
@@ -383,7 +652,6 @@
             btn.disabled = true;
             btn.innerText = "กำลังส่ง...";
 
-            // 🚨 สร้างตั๋ว Token ส่งให้หลังบ้านเช็ก
             const clientToken = "token_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
 
             try {
@@ -398,13 +666,11 @@
                 document.getElementById('q2Input').value = ""; 
                 document.getElementById('q3Input').value = ""; 
 
-                // 🚨 เริ่มวงจรล็อกปุ่ม 60 วินาที 
                 localStorage.setItem('lastSubmitTime', Date.now().toString());
                 startCountdown(COOLDOWN_SECONDS);
 
             } catch (error) {
                 showToast("เกิดข้อผิดพลาด กรุณาลองใหม่"); 
-                // ถ้าพัง ให้ปลดล็อกปุ่มให้เขากดส่งใหม่
                 btn.disabled = false;
                 btn.innerText = "ส่งข้อมูล";
             }
@@ -443,9 +709,20 @@
             }
         }
 
-        // 🚨 สั่งเช็กคูลดาวน์ก่อนโหลดข้อมูล
-        checkCooldown();
-        loadData();
+        // ระบบจดจำ Session ของแอดมิน (ทำให้แอดมินยังคงล็อกอินอยู่ได้แม้เมื่อเปิดหน้าจอใหม่)
+        function checkAdminSession() {
+            const savedSession = sessionStorage.getItem('adminSessionPass');
+            if (savedSession && getHash(savedSession) === 106139376) {
+                adminPassword = savedSession;
+                updateAdminUI(true);
+                loadAdminData();
+            } else {
+                checkCooldown();
+                loadData();
+            }
+        }
+
+        checkAdminSession();
     </script>
 </body>
 </html>
